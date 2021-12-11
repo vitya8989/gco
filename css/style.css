@@ -815,7 +815,7 @@ body {
 }
 .promo-slide.swiper-slide {
   height: 480px;
-  width: 375px
+  width: 357px
 }
 .grand__content {
   padding: 40px 0 70px
@@ -964,7 +964,7 @@ body {
   }
   .promo-slide.swiper-slide {
     width: 300px;
-    height: 384px
+    height: 404px
   }
 }
 @media (max-width:850px) {

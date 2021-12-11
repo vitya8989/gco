@@ -36,9 +36,11 @@ new Swiper('.promo-slider', {
 	breakpoints: {
 		891: {
 			spaceBetween: 24,
+			slidesPerView: 'auto',
 		},
 		1561: {
 			slidesPerView: 4,
+			spaceBetween: 24,
 		},
 	},
 });;
