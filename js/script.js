@@ -18,6 +18,7 @@ let toBack21 = document.querySelectorAll('.to-back-2-1');
 let toBack22 = document.querySelectorAll('.to-back-2-2');
 let toBack23 = document.querySelectorAll('.to-back-2-3');
 let toBack24 = document.querySelectorAll('.to-back-2-4');
+let headerContainer = document.querySelector('.header__container');
 
 
 for (let i = 0; i < secondMenu.length; i++) {
@@ -97,7 +98,7 @@ window.onresize = function () {
 			}
 		});
 	} else {
-		header.append(headerBottom);
+		headerContainer.appendChild(headerBottom);
 		for (let i = 0; i < secondMenu.length; i++) {
 			header.append(secondMenu[i]);
 		}

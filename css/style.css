@@ -186,12 +186,7 @@ body {
   display: none
 }
 .header__mob-group {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center
+  display: none
 }
 .header__links {
   display: -webkit-box;
@@ -1183,6 +1178,14 @@ body {
   }
   .header__content {
     padding: 18px 0
+  }
+  .header__mob-group {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center
   }
   .header__bottom {
     position: fixed;
