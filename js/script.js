@@ -101,6 +101,18 @@ window.onresize = function () {
 		for (let i = 0; i < secondMenu.length; i++) {
 			header.append(secondMenu[i]);
 		}
+		for (let i = 0; i < secondMenu.length; i++) {
+			secondMenuButton[i].onclick = function () {
+				for (let j = 0; j < secondMenuButton.length; j++) {
+					if (secondMenuButton[j].classList.contains('show') && secondMenuButton[j] != secondMenuButton[i]) {
+						secondMenuButton[j].classList.remove('show');
+						secondMenu[j].classList.remove('show');
+					}
+				}
+				secondMenuButton[i].classList.toggle('show');
+				secondMenu[i].classList.toggle('show');
+			}
+		}
 	}
 }
 

@@ -166,9 +166,7 @@ body {
   -webkit-box-shadow: 0 0 15px rgba(0,0,0,.2);
   box-shadow: 0 0 15px rgba(0,0,0,.2);
   position: relative;
-  z-index: 12;
-  position: fixed;
-  width: 100%
+  z-index: 12
 }
 .header__content {
   padding: 22px 0 0 0
@@ -460,7 +458,7 @@ body {
   -webkit-box-pack: center;
   -ms-flex-pack: center;
   justify-content: center;
-  padding: 40px 0 70px
+  padding: 40px 20px 70px
 }
 .second-menu__list {
   margin: 0 50px
@@ -477,7 +475,8 @@ body {
   font-weight: 400;
   font-size: 16px;
   line-height: 40px;
-  font-family: FuturaMediumC
+  font-family: FuturaMediumC;
+  white-space: nowrap
 }
 .second-menu__item a {
   color: #2c4661
@@ -504,8 +503,7 @@ body {
   opacity: 1
 }
 .second-menu.show-fix {
-  position: static;
-  min-height: 470px
+  position: static
 }
 .header-footer {
   display: none;
@@ -1120,6 +1118,14 @@ body {
     background: #e9f5fa
   }
 }
+@media (max-width:1380px) {
+  .second-menu__list {
+    margin: 0 25px
+  }
+  .second-menu__item {
+    line-height: 30px
+  }
+}
 @media (max-width:1340px) {
   .header__link:first-child {
     margin: 0 20px 0 0
@@ -1166,8 +1172,15 @@ body {
   .header__link:first-child {
     margin: 0 20px 0 0
   }
+  .second-menu__list {
+    margin: 0 17px
+  }
 }
 @media (max-width:1023px) {
+  .header {
+    position: fixed;
+    width: 100%
+  }
   .header__content {
     padding: 18px 0
   }
@@ -1284,7 +1297,7 @@ body {
     -webkit-transition: .3s;
     -o-transition: .3s;
     transition: .3s;
-    min-height: 470px
+    min-height: 380px
   }
   .nav__list {
     display: block
@@ -1309,11 +1322,14 @@ body {
     -ms-transform: rotate(-90deg);
     transform: rotate(-90deg)
   }
+  .second-menu-btn.show {
+    background: #fff
+  }
   .second-menu {
     background: 0 0
   }
   .second-menu__container {
-    padding: 0;
+    padding: 0 24px;
     display: block
   }
   .second-menu__list {
@@ -1334,7 +1350,6 @@ body {
   .second-menu__item {
     font-weight: 600;
     font-size: 17px;
-    line-height: 30px;
     color: #2c4661;
     cursor: pointer;
     -webkit-user-select: none;
@@ -1604,6 +1619,9 @@ body {
   }
   .nav__item {
     padding: 8px 0
+  }
+  .second-menu__container {
+    padding: 0 24px
   }
   .header-footer {
     text-align: left
