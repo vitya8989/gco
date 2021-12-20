@@ -32,13 +32,15 @@ headerSearchInput.onblur = function () {
 for (let i = 0; i < secondMenu.length; i++) {
 	secondMenuButton[i].onclick = function () {
 		for (let j = 0; j < secondMenuButton.length; j++) {
-			if (secondMenuButton[j].classList.contains('show') && secondMenuButton[j] != secondMenuButton[i]) {
+			if (secondMenuButton[j].classList.contains('show') && secondMenuButton[j].dataset.id != secondMenuButton[i].dataset.id) {
 				secondMenuButton[j].classList.remove('show');
 				secondMenu[j].classList.remove('show');
 			}
 		}
-		secondMenuButton[i].classList.toggle('show');
-		secondMenu[i].classList.toggle('show');
+		if (secondMenuButton[i].dataset.id == secondMenu[i].dataset.id) {
+			secondMenuButton[i].classList.toggle('show');
+			secondMenu[i].classList.toggle('show');
+		}
 	}
 }
 

@@ -32,13 +32,15 @@ headerSearchInput.onblur = function () {
 for (let i = 0; i < secondMenu.length; i++) {
 	secondMenuButton[i].onclick = function () {
 		for (let j = 0; j < secondMenuButton.length; j++) {
-			if (secondMenuButton[j].classList.contains('show') && secondMenuButton[j] != secondMenuButton[i]) {
+			if (secondMenuButton[j].classList.contains('show') && secondMenuButton[j].dataset.id != secondMenuButton[i].dataset.id) {
 				secondMenuButton[j].classList.remove('show');
 				secondMenu[j].classList.remove('show');
 			}
 		}
-		secondMenuButton[i].classList.toggle('show');
-		secondMenu[i].classList.toggle('show');
+		if (secondMenuButton[i].dataset.id == secondMenu[i].dataset.id) {
+			secondMenuButton[i].classList.toggle('show');
+			secondMenu[i].classList.toggle('show');
+		}
 	}
 }
 
@@ -258,6 +260,147 @@ window.addEventListener("resize", function () {
 		}
 	}
 }); ;
+const CLASS_NAME_SELECT = 'select';
+const CLASS_NAME_ACTIVE = 'select_show';
+const CLASS_NAME_SELECTED = 'select__option_selected';
+const SELECTOR_ACTIVE = '.select_show';
+const SELECTOR_DATA = '[data-select]';
+const SELECTOR_DATA_TOGGLE = '[data-select="toggle"]';
+const SELECTOR_OPTION_SELECTED = '.select__option_selected';
+
+class CustomSelect {
+	constructor(target, params) {
+		this._elRoot = typeof target === 'string' ? document.querySelector(target) : target;
+		this._params = params || {};
+		if (this._params['options']) {
+			this._elRoot.classList.add(CLASS_NAME_SELECT);
+			this._elRoot.innerHTML = CustomSelect.template(this._params);
+		}
+		this._elToggle = this._elRoot.querySelector(SELECTOR_DATA_TOGGLE);
+		this._elRoot.addEventListener('click', this._onClick.bind(this));
+	}
+	_onClick(e) {
+		const target = e.target;
+		const type = target.closest(SELECTOR_DATA).dataset.select;
+		switch (type) {
+			case 'toggle':
+				this.toggle();
+				break;
+			case 'option':
+				this._changeValue(target);
+				break;
+		}
+	}
+	_update(option) {
+		const selected = this._elRoot.querySelector(SELECTOR_OPTION_SELECTED);
+		if (selected) {
+			selected.classList.remove(CLASS_NAME_SELECTED);
+		}
+		option.classList.add(CLASS_NAME_SELECTED);
+		this._elToggle.textContent = option.textContent;
+		this._elToggle.value = option.dataset['value'];
+		this._elToggle.dataset.index = option.dataset['index'];
+		this._elRoot.dispatchEvent(new CustomEvent('select.change'));
+		this._params.onSelected ? this._params.onSelected(this, option) : null;
+		return option.dataset['value'];
+	}
+	_reset() {
+		const selected = this._elRoot.querySelector(SELECTOR_OPTION_SELECTED);
+		if (selected) {
+			selected.classList.remove(CLASS_NAME_SELECTED);
+		}
+		this._elToggle.textContent = 'Выберите из списка';
+		this._elToggle.value = '';
+		this._elToggle.dataset.index = -1;
+		this._elRoot.dispatchEvent(new CustomEvent('select.change'));
+		this._params.onSelected ? this._params.onSelected(this, null) : null;
+		return '';
+	}
+	_changeValue(option) {
+		if (option.classList.contains(CLASS_NAME_SELECTED)) {
+			return;
+		}
+		this._update(option);
+		this.hide();
+	}
+	show() {
+		document.querySelectorAll(SELECTOR_ACTIVE).forEach(select => {
+			select.classList.remove(CLASS_NAME_ACTIVE);
+		});
+		this._elRoot.classList.add(CLASS_NAME_ACTIVE);
+	}
+	hide() {
+		this._elRoot.classList.remove(CLASS_NAME_ACTIVE);
+	}
+	toggle() {
+		if (this._elRoot.classList.contains(CLASS_NAME_ACTIVE)) {
+			this.hide();
+		} else {
+			this.show();
+		}
+	}
+	dispose() {
+		this._elRoot.removeEventListener('click', this._onClick);
+	}
+	get value() {
+		return this._elToggle.value;
+	}
+	set value(value) {
+		let isExists = false;
+		this._elRoot.querySelectorAll('.select__option').forEach((option) => {
+			if (option.dataset['value'] === value) {
+				isExists = true;
+				return this._update(option);
+			}
+		});
+		if (!isExists) {
+			return this._reset();
+		}
+	}
+	get selectedIndex() {
+		return this._elToggle.dataset['index'];
+	}
+	set selectedIndex(index) {
+		const option = this._elRoot.querySelector(`.select__option[data-index="${index}"]`);
+		if (option) {
+			return this._update(option);
+		}
+		return this._reset();
+	}
+}
+
+CustomSelect.template = params => {
+	const name = params['name'];
+	const options = params['options'];
+	const targetValue = params['targetValue'];
+	let items = [];
+	let selectedIndex = -1;
+	let selectedValue = '';
+	let selectedContent = 'Выберите из списка';
+	options.forEach((option, index) => {
+		let selectedClass = '';
+		if (option[0] === targetValue) {
+			selectedClass = ' select__option_selected';
+			selectedIndex = index;
+			selectedValue = option[0];
+			selectedContent = option[1];
+		}
+		items.push(`<li class="select__option${selectedClass}" data-select="option" data-value="${option[0]}" data-index="${index}">${option[1]}</li>`);
+	});
+	return `<button type="button" class="select__toggle" name="${name}" value="${selectedValue}" data-select="toggle" data-index="${selectedIndex}">${selectedContent}</button>
+  <div class="select__dropdown">
+    <ul class="select__options">${items.join('')}</ul>
+  </div>`;
+};
+
+
+document.addEventListener('click', (e) => {
+	if (!e.target.closest('.select')) {
+		document.querySelectorAll(SELECTOR_ACTIVE).forEach(select => {
+			select.classList.remove(CLASS_NAME_ACTIVE);
+		});
+	}
+});;
 
 let mainImagesImgMini = document.querySelectorAll('.main-images__img-mini');
 let mainImagesImgBig = document.querySelectorAll('.main-images__img-big');
@@ -281,36 +424,73 @@ let size = document.querySelector('.size');
 let orderStockBtnNo = document.querySelector('.order-stock__btn-no');
 let orderStockRight = document.querySelector('.order-stock__right');
 
-if (window.innerWidth < 821) {
-	itemLeft.insertBefore(orderStock, size);
-	itemLeft.insertBefore(whereStock, size);
-	if (orderStockBtnNo) {
-		orderStock.append(orderStockBtnNo);
-	}
-}
-
-window.addEventListener("resize", function () {
+if (whereStock) {
 	if (window.innerWidth < 821) {
 		itemLeft.insertBefore(orderStock, size);
 		itemLeft.insertBefore(whereStock, size);
 		if (orderStockBtnNo) {
 			orderStock.append(orderStockBtnNo);
 		}
-	} else {
-		itemRight.prepend(whereStock);
-		itemRight.prepend(orderStock);
-		if (orderStockBtnNo) {
-			orderStockRight.append(orderStockBtnNo);
-		}
 	}
-});
+
+	window.addEventListener("resize", function () {
+		if (window.innerWidth < 821) {
+			itemLeft.insertBefore(orderStock, size);
+			itemLeft.insertBefore(whereStock, size);
+			if (orderStockBtnNo) {
+				orderStock.append(orderStockBtnNo);
+			}
+		} else {
+			itemRight.prepend(whereStock);
+			itemRight.prepend(orderStock);
+			if (orderStockBtnNo) {
+				orderStockRight.append(orderStockBtnNo);
+			}
+		}
+	});
+}
+
+let orderLensPurpose = document.querySelector('.order-lens__purpose');
+let about = document.querySelector('.about');
+let orderLensArt = document.querySelector('.order-lens__art');
+let lensForm = document.querySelector('.lens-form');
+let orderLensRow = document.querySelector('.order-lens__row');
+let info = document.querySelector('.info');
+let bonus = document.querySelector('.bonus');
+
+if (orderLensPurpose) {
+	if (window.innerWidth < 821) {
+		itemLeft.insertBefore(orderLensPurpose, about);
+		itemLeft.insertBefore(orderLensArt, about);
+		itemLeft.insertBefore(lensForm, about);
+		itemLeft.insertBefore(orderLensRow, about);
+		itemRight.append(info);
+	}
+
+	window.addEventListener("resize", function () {
+		if (window.innerWidth < 821) {
+			itemLeft.insertBefore(orderLensPurpose, about);
+			itemLeft.insertBefore(orderLensArt, about);
+			itemLeft.insertBefore(lensForm, about);
+			itemLeft.insertBefore(orderLensRow, about);
+			itemRight.append(info);
+		} else {
+			itemLeft.append(info);
+			itemRight.insertBefore(lensForm, bonus);
+			itemRight.insertBefore(orderLensRow, lensForm);
+			orderStock.append(orderLensArt);
+			orderStock.append(orderLensPurpose);
+			orderStock.append(orderLensRow);
+		}
+	});
+}
 
 let askPopup = document.querySelector('.ask-popup');
 let closeAsk = document.querySelector('.close-ask');
 let messagePopup = document.querySelector('.message-popup');
 let orderStockBtn = document.querySelector('.order-stock__btn');
 
-if (messagePopup) {
+if (messagePopup && orderStockBtn) {
 	orderStockBtn.onclick = function () {
 		messagePopup.classList.add('show');
 	}
@@ -384,3 +564,158 @@ benefitsClueArea.addEventListener('mouseenter', e => {
 benefitsClueArea.addEventListener('mouseleave', e => {
 	benefitsClueBody.classList.remove('show');
 });
+
+new Swiper('.similar-slider', {
+	speed: 600,
+	slidesPerView: 'auto',
+	spaceBetween: 18,
+	grabCursor: true,
+	breakpoints: {
+		1401: {
+			slidesPerView: 6,
+			spaceBetween: 18,
+		}
+	}
+});
+
+let infoHead = document.querySelectorAll('.info-head');
+let infoBody = document.querySelectorAll('.info-body');
+
+for (let i = 0; i < infoHead.length; i++) {
+	infoHead[i].onclick = function (e) {
+		for (let j = 0; j < infoHead.length; j++) {
+			if (infoBody[j] != this.nextElementSibling) {
+				infoBody[j].classList.remove('opened');
+				infoBody[j].style.maxHeight = 0;
+				infoHead[j].classList.remove('opened');
+			}
+		}
+		if (this.nextElementSibling.classList.contains('opened')) {
+			this.nextElementSibling.classList.remove('opened');
+			this.nextElementSibling.style.maxHeight = 0;
+			infoHead[i].classList.remove('opened');
+		} else {
+			this.nextElementSibling.classList.add('opened');
+			this.nextElementSibling.style.maxHeight = this.nextElementSibling.scrollHeight + 'px';
+			infoHead[i].classList.add('opened');
+		}
+	}
+}
+
+let orderLensBtn = document.querySelector('.order-lens__btn');
+let lensCalcForm = document.querySelector('.lens-calc');
+let selectsRequire = document.querySelectorAll('.select-require');
+let errorPopup = document.querySelector('.error-popup');
+
+if (orderLensBtn) {
+	const select1 = new CustomSelect('#select-1');
+	const select2 = new CustomSelect('#select-2');
+	const select3 = new CustomSelect('#select-3');
+	const select4 = new CustomSelect('#select-4');
+	const select5 = new CustomSelect('#select-5');
+	const select6 = new CustomSelect('#select-6');
+	const select7 = new CustomSelect('#select-7');
+	const select8 = new CustomSelect('#select-8');
+	const select9 = new CustomSelect('#select-9');
+	const select10 = new CustomSelect('#select-10');
+	const select11 = new CustomSelect('#select-11');
+	const select12 = new CustomSelect('#select-12');
+	const select13 = new CustomSelect('#select-13');
+	const select14 = new CustomSelect('#select-14');
+	const select15 = new CustomSelect('#select-15');
+}
+
+if (lensCalcForm) {
+	lensCalcForm.onsubmit = function (e) {
+		e.preventDefault();
+		let valid = true;
+
+		if (select1.value == '') {
+			valid = false;
+		}
+		if (select2.value == '') {
+			valid = false;
+		}
+		if (select3.value == '') {
+			valid = false;
+		}
+		if (select4.value == '') {
+			valid = false;
+		}
+		if (select5.value == '') {
+			valid = false;
+		}
+		if (select6.value == '') {
+			valid = false;
+		}
+		if (select7.value == '') {
+			valid = false;
+		}
+		if (select8.value == '') {
+			valid = false;
+		}
+		if (select9.value == '') {
+			valid = false;
+		}
+		if (select10.value == '') {
+			valid = false;
+		}
+		if (select11.value == '') {
+			valid = false;
+		}
+		if (select12.value == '') {
+			valid = false;
+		}
+		if (select13.value == '') {
+			valid = false;
+		}
+
+		if (valid) {
+			orderLensBtn.classList.remove('disabled');
+		}
+	}
+
+	orderLensBtn.onclick = function () {
+		if (!orderLensBtn.classList.contains('disabled')) {
+			messagePopup.classList.add('show');
+		} else {
+			lensCalcForm.classList.add('error-form');
+			setTimeout(function () {
+				lensCalcForm.classList.remove('error-form');
+			}, 200);
+		}
+	}
+
+	messagePopup.onclick = function (e) {
+		if (!e.target.closest('.message-popup__body')) {
+			messagePopup.classList.remove('show');
+		}
+	}
+	errorPopup.onclick = function (e) {
+		if (!e.target.closest('.error-popup__body')) {
+			errorPopup.classList.remove('show');
+		}
+	}
+	closeAsk.onclick = function () {
+		messagePopup.classList.remove('show');
+		errorPopup.classList.remove('show');
+	}
+}
+
+let lensClueBody = document.querySelector('.lens-clue__body');
+let lensClue = document.querySelector('.lens-clue');
+
+if (lensClue) {
+	lensClue.addEventListener('mouseenter', e => {
+		lensClueBody.classList.add('show');
+	});
+
+	lensClue.addEventListener('mouseleave', e => {
+		lensClueBody.classList.remove('show');
+	});
+}
+
+
+
+
+
