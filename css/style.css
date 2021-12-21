@@ -2759,6 +2759,15 @@ body {
   .size__group {
     width: calc(50% - 10px)
   }
+  .info-body ul {
+    padding: 0 0 0 15px
+  }
+  .info-body ul:last-of-type {
+    padding: 0 0 40px 15px
+  }
+  .info-body li {
+    padding: 0 0 0 15px
+  }
 }
 @media (max-width:1100px) {
   .header__tel-link {
