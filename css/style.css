@@ -952,6 +952,7 @@ body {
   transform: rotate(180deg)
 }
 .promo-slide__img {
+  display: block;
   border-radius: 12px 0 38px;
   overflow: hidden;
   height: 100%
@@ -1003,7 +1004,7 @@ body {
   width: calc(50% - 40px);
   margin: 0 0 -25px 40px
 }
-.grand__text {
+.grand__text-items p {
   margin: 0 0 25px 0;
   font-weight: 500;
   font-size: 16px;
@@ -1351,7 +1352,10 @@ body {
   cursor: pointer
 }
 .main-images__img-mini img {
-  width: 100%
+  width: 100%;
+  height: 100%;
+  -o-object-fit: contain;
+  object-fit: contain
 }
 .main-images__img-mini.active-img {
   border: 2px solid #a2adc9;
@@ -2131,27 +2135,28 @@ body {
   transition: .3s;
   padding: 0 27px 0 40px
 }
-.info-body__title {
+.info-body h5 {
   margin: 27px 0 20px 0;
   font-family: FuturaMediumC;
   font-size: 22px;
   line-height: 110%;
-  color: #171717
+  color: #171717;
+  font-weight: 400
 }
-.info-body__text {
+.info-body p {
   margin: 0 0 20px 0;
   font-family: FuturaBookC;
   font-size: 18px;
   line-height: 120%;
   color: #2b3040
 }
-.info-body__list {
+.info-body ul {
   padding: 0 0 0 20px
 }
-.info-body__list:last-of-type {
+.info-body ul:last-of-type {
   padding: 0 0 40px 20px
 }
-.info-body__item {
+.info-body li {
   padding: 0 0 0 19px;
   position: relative;
   margin: 0 0 15px;
@@ -2160,7 +2165,7 @@ body {
   line-height: 120%;
   color: #2b3040
 }
-.info-body__item::before {
+.info-body li::before {
   position: absolute;
   content: "";
   width: 5px;
@@ -2188,7 +2193,6 @@ body {
   color: #171717
 }
 .lens-form__price {
-  font-family: FuturaBookC;
   font-size: 26px;
   line-height: 20px;
   color: #171717;
@@ -2257,7 +2261,7 @@ body {
   line-height: 14px;
   color: #171717
 }
-.lens-calc__bottom .select {
+.lens-calc__bottom .SumoSelect {
   margin: 0
 }
 .lens-calc__select-full {
@@ -2332,12 +2336,13 @@ body {
   line-height: 115%;
   color: #111
 }
-.select {
+.SumoSelect {
   width: 100%;
   margin: 0 0 13px 0;
   position: relative
 }
-.select__toggle {
+.SumoSelect .CaptionCont,
+.SumoSelect__toggle {
   height: 55px;
   font-size: 18px;
   line-height: 25px;
@@ -2353,37 +2358,39 @@ body {
   -ms-flex-align: center;
   align-items: center;
   width: 100%;
+  max-width: 100%;
   padding: 0 10px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
-  justify-content: space-between
+  user-select: none
 }
-.select .select__toggle::after {
-  content: "";
+.SumoSelect .CaptionCont span,
+.SumoSelect__toggle span {
+  padding-right: 10px;
+  position: absolute
+}
+.SumoSelect .CaptionCont label,
+.SumoSelect__toggle label {
   width: 13px;
-  height: 8px;
-  margin: 0 0 0 3px;
-  background: url(../img/icons/arrow_down_select.svg) 0 0/100% 100% no-repeat
+  right: 10px
 }
-.select .select__toggle:focus {
-  outline: 0
+.SumoSelect .CaptionCont label i,
+.SumoSelect__toggle label i {
+  -webkit-transition: .2s;
+  -o-transition: .2s;
+  transition: .2s;
+  background: url(../img/icons/arrow_down_select.svg) 0 0/100% 100% no-repeat;
+  width: 13px;
+  height: 8px
 }
-.select .select_show .select__toggle::after {
-  -webkit-transform: rotate(180deg);
-  -ms-transform: rotate(180deg);
-  transform: rotate(180deg)
-}
-.select__dropdown {
+.SumoSelect .optWrapper {
   display: none;
   position: absolute;
   top: 55px;
   left: 0;
   right: 0;
-  padding: 20px 0;
+  padding: 10px 0;
   border: 1px solid #ccc;
   max-height: 326px;
   overflow-y: auto;
@@ -2391,27 +2398,22 @@ body {
   z-index: 2;
   background-color: #fff
 }
-.select__option {
+.SumoSelect .opt {
   font-size: 18px;
   line-height: 150%;
-  color: #545b6a;
-  padding: 5px 0 5px 22px
+  color: #545b6a
 }
-.select_show .select__dropdown {
-  display: block
+.SumoSelect > .optWrapper > .options li.opt {
+  padding: 5px 0 5px 14px;
+  border: none
 }
-.select_show .select__backdrop {
-  display: block
+.SumoSelect.open .CaptionCont label i {
+  -webkit-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg)
 }
-.select__option_selected {
-  background-color: #e1f5fe
-}
-.select__option:hover {
-  background-color: #f5f5f5;
-  cursor: pointer;
-  -webkit-transition: .2s background-color ease-in-out;
-  -o-transition: .2s background-color ease-in-out;
-  transition: .2s background-color ease-in-out
+.SumoSelect.open .optWrapper {
+  top: 55px
 }
 .error-popup {
   position: fixed;
@@ -2613,9 +2615,6 @@ body {
   .order-stock__btn-no {
     width: 100%
   }
-  .select__toggle {
-    padding: 0 6px
-  }
 }
 @media (max-width:1280px) {
   .header__link {
@@ -2676,13 +2675,13 @@ body {
   .lens-calc__bottom {
     padding: 1px 0 0 0
   }
-  .lens-calc__bottom .select {
+  .lens-calc__bottom .SumoSelect {
     width: 100%
   }
   .lens-calc__bottom .lens-calc__capture {
     left: 0
   }
-  .select {
+  .SumoSelect {
     margin: 0 0 0 17px;
     width: calc(50% - 8.5px)
   }

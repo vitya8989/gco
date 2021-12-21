@@ -19,6 +19,8 @@ let toBack22 = document.querySelectorAll('.to-back-2-2');
 let toBack23 = document.querySelectorAll('.to-back-2-3');
 let toBack24 = document.querySelectorAll('.to-back-2-4');
 let headerContent = document.querySelector('.header__content');
+let headerContainerTop = document.querySelector('.header__container-top');
+let headerContainerBottom = document.querySelector('.header__container-bottom');
 let headerSearchInput = document.querySelector('.header__search-input');
 let headerSearch = document.querySelector('.header__search');
 
@@ -108,7 +110,7 @@ window.addEventListener("resize", function () {
 			}
 		});
 	} else {
-		headerContent.appendChild(headerBottom);
+		headerContainerBottom.appendChild(headerBottom);
 		for (let i = 0; i < secondMenu.length; i++) {
 			header.append(secondMenu[i]);
 		}

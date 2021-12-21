@@ -19,6 +19,8 @@ let toBack22 = document.querySelectorAll('.to-back-2-2');
 let toBack23 = document.querySelectorAll('.to-back-2-3');
 let toBack24 = document.querySelectorAll('.to-back-2-4');
 let headerContent = document.querySelector('.header__content');
+let headerContainerTop = document.querySelector('.header__container-top');
+let headerContainerBottom = document.querySelector('.header__container-bottom');
 let headerSearchInput = document.querySelector('.header__search-input');
 let headerSearch = document.querySelector('.header__search');
 
@@ -108,7 +110,7 @@ window.addEventListener("resize", function () {
 			}
 		});
 	} else {
-		headerContent.appendChild(headerBottom);
+		headerContainerBottom.appendChild(headerBottom);
 		for (let i = 0; i < secondMenu.length; i++) {
 			header.append(secondMenu[i]);
 		}
@@ -604,77 +606,32 @@ for (let i = 0; i < infoHead.length; i++) {
 
 let orderLensBtn = document.querySelector('.order-lens__btn');
 let lensCalcForm = document.querySelector('.lens-calc');
-let selectsRequire = document.querySelectorAll('.select-require');
+let selectsRequire = document.querySelectorAll('.required-select');
 let errorPopup = document.querySelector('.error-popup');
 
 if (orderLensBtn) {
-	const select1 = new CustomSelect('#select-1');
-	const select2 = new CustomSelect('#select-2');
-	const select3 = new CustomSelect('#select-3');
-	const select4 = new CustomSelect('#select-4');
-	const select5 = new CustomSelect('#select-5');
-	const select6 = new CustomSelect('#select-6');
-	const select7 = new CustomSelect('#select-7');
-	const select8 = new CustomSelect('#select-8');
-	const select9 = new CustomSelect('#select-9');
-	const select10 = new CustomSelect('#select-10');
-	const select11 = new CustomSelect('#select-11');
-	const select12 = new CustomSelect('#select-12');
-	const select13 = new CustomSelect('#select-13');
-	const select14 = new CustomSelect('#select-14');
-	const select15 = new CustomSelect('#select-15');
+	$(document).ready(function () {
+		let selectsSumo = $('select').SumoSelect({
+			placeholder: '',
+		});
+		for (let i = 0; i < selectsSumo.length; i++) {
+			selectsSumo[i].sumo.unSelectAll();
+		}
+		lensCalcForm.onsubmit = function (e) {
+			e.preventDefault();
+			let valid = true;
+			for (let i = 0; i < selectsRequire.length; i++) {
+				if (selectsRequire[i].value == '') {
+					valid = false;
+				}
+			}
+			if (valid) {
+				orderLensBtn.classList.remove('disabled');
+			}
+		}
+	});
 }
-
 if (lensCalcForm) {
-	lensCalcForm.onsubmit = function (e) {
-		e.preventDefault();
-		let valid = true;
-
-		if (select1.value == '') {
-			valid = false;
-		}
-		if (select2.value == '') {
-			valid = false;
-		}
-		if (select3.value == '') {
-			valid = false;
-		}
-		if (select4.value == '') {
-			valid = false;
-		}
-		if (select5.value == '') {
-			valid = false;
-		}
-		if (select6.value == '') {
-			valid = false;
-		}
-		if (select7.value == '') {
-			valid = false;
-		}
-		if (select8.value == '') {
-			valid = false;
-		}
-		if (select9.value == '') {
-			valid = false;
-		}
-		if (select10.value == '') {
-			valid = false;
-		}
-		if (select11.value == '') {
-			valid = false;
-		}
-		if (select12.value == '') {
-			valid = false;
-		}
-		if (select13.value == '') {
-			valid = false;
-		}
-
-		if (valid) {
-			orderLensBtn.classList.remove('disabled');
-		}
-	}
-
 	orderLensBtn.onclick = function () {
 		if (!orderLensBtn.classList.contains('disabled')) {
 			messagePopup.classList.add('show');
